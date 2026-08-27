@@ -2,8 +2,43 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  gap: 1rem;
   min-height: 100vh;
+  padding: 2rem 1rem;
   text-align: center;
   color: #1a1a1a;
+}
+
+.latex-input {
+  width: 100%;
+  max-width: 640px;
+  min-height: 4rem;
+  padding: 0.75rem;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+}
+
+.rendered-formula {
+  width: 100%;
+  max-width: 640px;
+  min-height: 3rem;
+  padding: 1rem;
+  overflow-x: auto;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+.result-panel {
+  font-size: 1.1rem;
+}
+
+.result-panel--error {
+  max-width: 640px;
+  color: #c00;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.9rem;
 }
