@@ -33,10 +33,10 @@ const FUNCTION_NAMES_BY_LENGTH = Object.keys(FUNCTION_MAP).sort((a, b) => b.leng
 // the implicit-multiplication pass (see withProtectedFunctionCalls below).
 const PLACEHOLDER = "\u0001";
 
-/** Strips \left, \right, and LaTeX spacing commands; collapses whitespace. */
-function stripNoise(input: string): string {
+/** Strips \left, \right, \limits, and LaTeX spacing commands; collapses whitespace. */
+export function stripLatexNoise(input: string): string {
   return input
-    .replace(/\\left|\\right/g, "")
+    .replace(/\\left|\\right|\\limits/g, "")
     .replace(/\\(,|;|:|!|quad|qquad| )/g, "")
     .replace(/\s+/g, "");
 }
@@ -219,7 +219,7 @@ function withProtectedFunctionCalls(s: string, run: (protectedStr: string) => st
 }
 
 export function latexToMathJs(latex: string): string {
-  const stripped = stripNoise(latex);
+  const stripped = stripLatexNoise(latex);
   const converted = transform(stripped);
   return withProtectedFunctionCalls(converted, insertImplicitMultiplication);
 }
