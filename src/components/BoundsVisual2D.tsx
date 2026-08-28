@@ -91,13 +91,17 @@ export function BoundsVisual2D({ levels }: BoundsVisual2DProps) {
         </g>
       ))}
 
-      <text x={axes.x2 - 4} y={axes.originY - 6} fontSize={12} fill="#e0645c" textAnchor="end">
+      <polygon points={polygonPoints} fill="rgba(79,131,204,0.25)" stroke="#4f83cc" strokeWidth={2} />
+
+      {/* Drawn in the fixed padding margin, outside the plotted region, so a
+          region that touches the edges of its own bounding box (a disk, for
+          instance -- it meets x=xMax right at y=0) never paints over these. */}
+      <text x={WIDTH - 6} y={axes.originY - 8} fontSize={13} fontWeight="bold" fill="#e0645c" textAnchor="end">
         {outer.varName}
       </text>
-      <text x={axes.originX + 6} y={axes.y2 + 12} fontSize={12} fill="#5b8fe0">
+      <text x={axes.originX + 8} y={14} fontSize={13} fontWeight="bold" fill="#5b8fe0" textAnchor="start">
         {inner.varName}
       </text>
-      <polygon points={polygonPoints} fill="rgba(79,131,204,0.25)" stroke="#4f83cc" strokeWidth={2} />
     </svg>
   );
 }
