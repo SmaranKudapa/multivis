@@ -1,3 +1,5 @@
+import { safeBounds } from "./safeBounds";
+
 export interface BoundaryPoint {
   outer: number;
   inner: number;
@@ -11,6 +13,12 @@ export interface BoundaryPoint {
  * disk-like region, where the "edges" collapse to a point) or not (a
  * rectangle-like region, with real vertical edges). Used for the 2D bounds
  * view now, and reusable later for the triple-integral solid's side wall.
+ *
+ * Bounds are run through safeBounds() before use: a bound can legitimately
+ * be undefined for part of the outer range (e.g. sqrt(1-x^2) once x>1)
+ * without the integral itself being invalid -- it just means the region
+ * doesn't extend there. Left as NaN, that would poison every bounding-box
+ * calculation downstream and make the whole graph silently disappear.
  */
 export function sampleTypeIBoundary(
   outerMin: number,
@@ -29,16 +37,20 @@ export function sampleTypeIBoundary(
     let inner: number;
     if (seg === 0) {
       outer = outerMin + frac * (outerMax - outerMin);
-      inner = lowerAt(outer);
+      const [lo] = safeBounds(lowerAt(outer), upperAt(outer));
+      inner = lo;
     } else if (seg === 1) {
       outer = outerMax;
-      inner = lowerAt(outerMax) + frac * (upperAt(outerMax) - lowerAt(outerMax));
+      const [lo, hi] = safeBounds(lowerAt(outerMax), upperAt(outerMax));
+      inner = lo + frac * (hi - lo);
     } else if (seg === 2) {
       outer = outerMax - frac * (outerMax - outerMin);
-      inner = upperAt(outer);
+      const [, hi] = safeBounds(lowerAt(outer), upperAt(outer));
+      inner = hi;
     } else {
       outer = outerMin;
-      inner = upperAt(outerMin) + frac * (lowerAt(outerMin) - upperAt(outerMin));
+      const [lo, hi] = safeBounds(lowerAt(outerMin), upperAt(outerMin));
+      inner = hi + frac * (lo - hi);
     }
     points.push({ outer, inner });
   }
