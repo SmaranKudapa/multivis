@@ -3,6 +3,7 @@ import * as THREE from "three";
 import type { EvaluatedLevel } from "../../lib/evaluateIntegral";
 import type { ScalarFn } from "../../lib/parser";
 import { buildParametricGeometry } from "../../lib/parametricSurface";
+import { safeBounds } from "../../lib/safeBounds";
 
 interface DoubleIntegralVisualProps {
   levels: EvaluatedLevel[];
@@ -28,9 +29,15 @@ export function DoubleIntegralVisual({ levels, integrandFn }: DoubleIntegralVisu
     return { min, max };
   }, [outer]);
 
+  // Bounds can legitimately be undefined for part of the outer range (e.g.
+  // sqrt(1-x^2) once x>1) without the integral itself being invalid -- that
+  // just means the region doesn't extend there. safeBounds keeps the NaN
+  // that would otherwise produce from poisoning the geometry's vertex
+  // positions (which silently makes the whole mesh disappear).
   const innerAt = (outerVal: number) => {
     const scope = { [outer.varName]: outerVal };
-    return { lo: inner.lowerFn(scope), hi: inner.upperFn(scope) };
+    const [lo, hi] = safeBounds(inner.lowerFn(scope), inner.upperFn(scope));
+    return { lo, hi };
   };
 
   const surfaceGeometry = useMemo(() => {
