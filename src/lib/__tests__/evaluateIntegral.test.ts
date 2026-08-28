@@ -54,6 +54,21 @@ describe("evaluateLatexIntegral", () => {
     expect(r.error).toMatch(/Integrand/);
   });
 
+  it("treats an inverted outer bound (upper < lower) as an error, not a silent zero", () => {
+    const r = evaluateLatexIntegral("\\int_{1}^{0}\\int_{0}^{1} 1 \\, dy\\, dx");
+    expect(r.status).toBe("error");
+    if (r.status !== "error") return;
+    expect(r.error).toMatch(/don't describe a valid region/);
+  });
+
+  it("treats an inner bound that's inverted everywhere as an error", () => {
+    // upper=0, lower=1 for every x -- the region is empty at every cross-section.
+    const r = evaluateLatexIntegral("\\int_{0}^{1}\\int_{1}^{0} 1 \\, dy\\, dx");
+    expect(r.status).toBe("error");
+    if (r.status !== "error") return;
+    expect(r.error).toMatch(/don't describe a valid region/);
+  });
+
   it("uses sensible default resolutions when none are given", () => {
     const r = evaluateLatexIntegral("\\int_{0}^{1}\\int_{0}^{1} 1 \\, dy\\, dx");
     expect(r.status).toBe("ok");
