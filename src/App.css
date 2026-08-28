@@ -42,3 +42,63 @@
   font-family: ui-monospace, Consolas, monospace;
   font-size: 0.9rem;
 }
+
+.graphs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 900px;
+}
+
+.graph-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.graph-label {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.graph-container {
+  width: 380px;
+  max-width: 100%;
+  height: 380px;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* Belt-and-suspenders: force the WebGL canvas to fill its container via
+   CSS alone, so the view is never stuck at the browser's default 300x150
+   canvas size while waiting on react-three-fiber's resize observer. */
+.graph-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.graph-container--2d {
+  background: #fff;
+}
+
+.bounds-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.graph-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0 1rem;
+  text-align: center;
+  color: #888;
+}
