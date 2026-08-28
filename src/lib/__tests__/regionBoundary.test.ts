@@ -34,4 +34,16 @@ describe("sampleTypeIBoundary", () => {
       expect(p.outer).toBeLessThanOrEqual(1 + 1e-9);
     }
   });
+
+  it("never produces NaN when an upper bound is undefined outside part of the outer range", () => {
+    // \int_0^4 \int_0^{sqrt(1-x^2)} -- upperAt is only real for x in [0,1];
+    // NaN for x in (1,4]. Every sampled point must stay finite.
+    const lowerAt = () => 0;
+    const upperAt = (o: number) => Math.sqrt(1 - o * o); // NaN for o > 1
+    const points = sampleTypeIBoundary(0, 4, lowerAt, upperAt, 80);
+    for (const p of points) {
+      expect(Number.isFinite(p.outer)).toBe(true);
+      expect(Number.isFinite(p.inner)).toBe(true);
+    }
+  });
 });
