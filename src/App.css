@@ -102,3 +102,7 @@
   text-align: center;
   color: #888;
 }
+
+.graph-placeholder--error {
+  color: #c00;
+}

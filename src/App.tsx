@@ -29,6 +29,7 @@ function App() {
           <div className="graph-container graph-container--2d">
             {isDouble && evaluated.status === "ok" && <BoundsVisual2D levels={evaluated.levels} />}
             {isTriple && <p className="graph-placeholder">Coming soon for triple integrals.</p>}
+            {evaluated.status === "error" && <p className="graph-placeholder graph-placeholder--error">Fix the integral above to see this graph.</p>}
           </div>
         </div>
 
@@ -41,6 +42,7 @@ function App() {
               </SceneRoot>
             )}
             {isTriple && <p className="graph-placeholder">Coming soon for triple integrals.</p>}
+            {evaluated.status === "error" && <p className="graph-placeholder graph-placeholder--error">Fix the integral above to see this graph.</p>}
           </div>
         </div>
       </div>
