@@ -64,5 +64,12 @@ export function evaluateLatexIntegral(latex: string, resolutions?: number[]): Ev
     resolutions ?? defaultResolutions(mode),
   );
 
+  if (result.validCellCount === 0) {
+    return {
+      status: "error",
+      error: "These bounds don't describe a valid region (no point satisfies every bound -- check that each upper bound is actually greater than its lower bound).",
+    };
+  }
+
   return { status: "ok", mode, levels: evaluatedLevels, integrandFn: integrandCompiled.fn, result };
 }
