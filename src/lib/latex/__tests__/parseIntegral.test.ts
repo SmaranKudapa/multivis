@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseIntegral } from "../parseIntegral";
+import { buildIntegralLatex, parseIntegral } from "../parseIntegral";
 
 describe("parseIntegral", () => {
   it("parses a type-I double integral (outer x, inner y)", () => {
@@ -99,5 +99,44 @@ describe("parseIntegral", () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.error).toMatch(/missing its integrand/);
+  });
+});
+
+describe("buildIntegralLatex", () => {
+  it("round-trips a double integral through parse -> build -> parse", () => {
+    const original = parseIntegral("\\int_{0}^{1}\\int_{x^2}^{\\sqrt{x}} (x+y) \\, dy\\, dx");
+    expect(original.ok).toBe(true);
+    if (!original.ok) return;
+
+    const rebuilt = buildIntegralLatex(original.integral.levels, original.integral.integrandLatex);
+    const reparsed = parseIntegral(rebuilt);
+    expect(reparsed.ok).toBe(true);
+    if (!reparsed.ok) return;
+    expect(reparsed.integral).toEqual(original.integral);
+  });
+
+  it("round-trips a triple integral", () => {
+    const original = parseIntegral("\\int_{0}^{1}\\int_{0}^{1-x}\\int_{0}^{1-x-y} xyz \\, dz\\, dy\\, dx");
+    expect(original.ok).toBe(true);
+    if (!original.ok) return;
+
+    const rebuilt = buildIntegralLatex(original.integral.levels, original.integral.integrandLatex);
+    const reparsed = parseIntegral(rebuilt);
+    expect(reparsed.ok).toBe(true);
+    if (!reparsed.ok) return;
+    expect(reparsed.integral).toEqual(original.integral);
+  });
+
+  it("preserves a type-II (y outer) variable order", () => {
+    const original = parseIntegral("\\int_{0}^{2}\\int_{0}^{y} xy \\, dx\\, dy");
+    expect(original.ok).toBe(true);
+    if (!original.ok) return;
+
+    const rebuilt = buildIntegralLatex(original.integral.levels, original.integral.integrandLatex);
+    expect(rebuilt).toContain("dx\\, dy");
+    const reparsed = parseIntegral(rebuilt);
+    expect(reparsed.ok).toBe(true);
+    if (!reparsed.ok) return;
+    expect(reparsed.integral.levels.map((l) => l.varName)).toEqual(["y", "x"]);
   });
 });
