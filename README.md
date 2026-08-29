@@ -18,7 +18,10 @@ you just want to see it in action first.
 - Below that, each bound and the integrand also get their own small text
   field, if you'd rather tweak just one number than edit the raw LaTeX —
   editing a field updates everything else (the LaTeX box included), since
-  they're both just views onto the same integral.
+  they're both just views onto the same integral. These fields stay put
+  even if what you're typing is momentarily invalid (like a blank
+  integrand mid-edit) — the error shows up below instead of the fields
+  disappearing on you.
 - The computed value (area/volume, or a weighted total if your integrand
   isn't 1) appears underneath.
 - **Bounds Vis** and **Shape Vis** show two different views, and what
