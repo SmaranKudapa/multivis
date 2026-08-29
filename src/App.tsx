@@ -9,10 +9,11 @@ import { DoubleIntegralVisual } from "./components/scene/DoubleIntegralVisual";
 import { TripleIntegralVisual } from "./components/scene/TripleIntegralVisual";
 import { useParsedIntegral } from "./hooks/useParsedIntegral";
 
-const DEFAULT_LATEX = "\\int_{-1}^{1}\\int_{-\\sqrt{1-x^2}}^{\\sqrt{1-x^2}} x^2+y^2 \\, dy\\, dx";
+const SAMPLE_DOUBLE_LATEX = "\\int_{-1}^{1}\\int_{-\\sqrt{1-x^2}}^{\\sqrt{1-x^2}} x^2+y^2 \\, dy\\, dx";
+const SAMPLE_TRIPLE_LATEX = "\\int_{0}^{1}\\int_{0}^{1-x}\\int_{0}^{1-x-y} 1 \\, dz\\, dy\\, dx";
 
 function App() {
-  const [latex, setLatex] = useState(DEFAULT_LATEX);
+  const [latex, setLatex] = useState(SAMPLE_DOUBLE_LATEX);
   const evaluated = useParsedIntegral(latex);
   const isDouble = evaluated.status === "ok" && evaluated.mode === "double";
   const isTriple = evaluated.status === "ok" && evaluated.mode === "triple";
@@ -21,6 +22,14 @@ function App() {
     <main className="app-shell">
       <h1>Multivis</h1>
       <LatexInput value={latex} onChange={setLatex} />
+      <div className="samples">
+        <button type="button" onClick={() => setLatex(SAMPLE_DOUBLE_LATEX)}>
+          Sample 2D integral
+        </button>
+        <button type="button" onClick={() => setLatex(SAMPLE_TRIPLE_LATEX)}>
+          Sample 3D integral
+        </button>
+      </div>
       <RenderedFormula latex={latex} />
       <ResultPanel evaluated={evaluated} />
 

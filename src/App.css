@@ -21,6 +21,25 @@
   resize: vertical;
 }
 
+.samples {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.samples button {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  color: #333;
+  background: #f4f4f4;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.samples button:hover {
+  background: #e8e8e8;
+}
+
 .rendered-formula {
   width: 100%;
   max-width: 640px;
