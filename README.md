@@ -15,6 +15,10 @@ integral**, **Sample 3D integral**) fill the box with a working example if
 you just want to see it in action first.
 
 - The formula renders below the box, in proper math notation.
+- Below that, each bound and the integrand also get their own small text
+  field, if you'd rather tweak just one number than edit the raw LaTeX —
+  editing a field updates everything else (the LaTeX box included), since
+  they're both just views onto the same integral.
 - The computed value (area/volume, or a weighted total if your integrand
   isn't 1) appears underneath.
 - **Bounds Vis** and **Shape Vis** show two different views, and what
