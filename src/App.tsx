@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import { LatexInput } from "./components/LatexInput";
 import { RenderedFormula } from "./components/RenderedFormula";
+import { BoundsEditor } from "./components/BoundsEditor";
 import { ResultPanel } from "./components/ResultPanel";
 import { BoundsVisual2D } from "./components/BoundsVisual2D";
 import { SceneRoot } from "./components/scene/SceneRoot";
@@ -31,6 +32,7 @@ function App() {
         </button>
       </div>
       <RenderedFormula latex={latex} />
+      <BoundsEditor latex={latex} onChange={setLatex} />
       <ResultPanel evaluated={evaluated} />
 
       <div className="graphs">
