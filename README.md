@@ -10,14 +10,21 @@ describes.
 ## Using it
 
 There's one text box. Type an integral in LaTeX, and everything else
-updates as you type:
+updates as you type. Two buttons above the formula (**Sample 2D
+integral**, **Sample 3D integral**) fill the box with a working example if
+you just want to see it in action first.
 
 - The formula renders below the box, in proper math notation.
 - The computed value (area/volume, or a weighted total if your integrand
   isn't 1) appears underneath.
-- **Bounds Vis** shows the 2D region your bounds describe.
-- **Shape Vis** shows it in 3D — the surface/volume under a double
-  integral, or the solid a triple integral is bounded by.
+- **Bounds Vis** and **Shape Vis** show two different views, and what
+  they show depends on whether you typed a double or triple integral:
+  - **Double integral:** Bounds Vis is the 2D region your bounds
+    describe; Shape Vis is the surface/volume above it in 3D.
+  - **Triple integral:** a triple integral's bounds already describe a 3D
+    solid directly (there's no separate 2D region, and no "surface" the
+    way a double integral has one), so Bounds Vis shows that solid, and
+    Shape Vis is disabled.
 
 If your bounds don't describe a valid region (e.g. an upper bound that's
 actually less than the lower bound), you'll get an error message instead
