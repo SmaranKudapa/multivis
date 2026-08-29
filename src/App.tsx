@@ -6,6 +6,7 @@ import { ResultPanel } from "./components/ResultPanel";
 import { BoundsVisual2D } from "./components/BoundsVisual2D";
 import { SceneRoot } from "./components/scene/SceneRoot";
 import { DoubleIntegralVisual } from "./components/scene/DoubleIntegralVisual";
+import { TripleIntegralVisual } from "./components/scene/TripleIntegralVisual";
 import { useParsedIntegral } from "./hooks/useParsedIntegral";
 
 const DEFAULT_LATEX = "\\int_{-1}^{1}\\int_{-\\sqrt{1-x^2}}^{\\sqrt{1-x^2}} x^2+y^2 \\, dy\\, dx";
@@ -27,8 +28,9 @@ function App() {
         <div className="graph-panel">
           <h2 className="graph-label">Bounds Vis</h2>
           <div className="graph-container graph-container--2d">
+            {/* For a triple integral this shows the base (outer, middle) domain D -- same 2D component, just fed the first two levels and ignoring the innermost (height) bound. */}
             {isDouble && evaluated.status === "ok" && <BoundsVisual2D levels={evaluated.levels} />}
-            {isTriple && <p className="graph-placeholder">Coming soon for triple integrals.</p>}
+            {isTriple && evaluated.status === "ok" && <BoundsVisual2D levels={evaluated.levels.slice(0, 2)} />}
             {evaluated.status === "error" && <p className="graph-placeholder graph-placeholder--error">Fix the integral above to see this graph.</p>}
           </div>
         </div>
@@ -41,7 +43,11 @@ function App() {
                 <DoubleIntegralVisual levels={evaluated.levels} integrandFn={evaluated.integrandFn} />
               </SceneRoot>
             )}
-            {isTriple && <p className="graph-placeholder">Coming soon for triple integrals.</p>}
+            {isTriple && evaluated.status === "ok" && (
+              <SceneRoot>
+                <TripleIntegralVisual levels={evaluated.levels} />
+              </SceneRoot>
+            )}
             {evaluated.status === "error" && <p className="graph-placeholder graph-placeholder--error">Fix the integral above to see this graph.</p>}
           </div>
         </div>
