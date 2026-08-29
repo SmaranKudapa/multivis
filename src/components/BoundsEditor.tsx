@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { buildIntegralLatex, parseIntegral, type IntegralLevel } from "../lib/latex/parseIntegral";
 
 interface BoundsEditorProps {
@@ -6,30 +6,49 @@ interface BoundsEditorProps {
   onChange: (latex: string) => void;
 }
 
+interface Structure {
+  levels: IntegralLevel[];
+  integrandLatex: string;
+}
+
+function parseToStructure(latex: string): Structure | null {
+  const parsed = parseIntegral(latex);
+  return parsed.ok ? { levels: parsed.integral.levels, integrandLatex: parsed.integral.integrandLatex } : null;
+}
+
 /**
  * A structured alternative to editing the raw LaTeX by hand: one row per
  * bound plus the integrand, each a plain text field. Editing a field
  * rebuilds the full LaTeX string (via buildIntegralLatex) and reports it
- * through onChange, so the LaTeX box stays the single source of truth --
- * this is a view onto the same state, not a separate one to keep in sync.
- * Renders nothing if the current LaTeX doesn't parse as an integral yet
- * (the user needs to fix the structure in the box first).
+ * through onChange, so the LaTeX box stays the single source of truth.
+ *
+ * Keeps its own copy of the last successfully-parsed structure rather than
+ * re-deriving purely from `latex` on every render: a field can legitimately
+ * pass through a not-yet-valid state while being edited (e.g. the integrand
+ * briefly empty), and re-parsing would otherwise make the whole editor
+ * vanish mid-edit instead of just letting the resulting error show
+ * elsewhere (the result panel, the graphs) while editing continues here.
  */
 export function BoundsEditor({ latex, onChange }: BoundsEditorProps) {
-  const parsed = useMemo(() => parseIntegral(latex), [latex]);
+  const [structure, setStructure] = useState<Structure | null>(() => parseToStructure(latex));
 
-  if (!parsed.ok) return null;
-  const { levels, integrandLatex } = parsed.integral;
+  useEffect(() => {
+    const next = parseToStructure(latex);
+    if (next) setStructure(next);
+  }, [latex]);
+
+  if (!structure) return null;
+  const { levels, integrandLatex } = structure;
 
   function updateLevel(index: number, patch: Partial<IntegralLevel>) {
-    if (!parsed.ok) return;
-    const nextLevels = parsed.integral.levels.map((l, i) => (i === index ? { ...l, ...patch } : l));
-    onChange(buildIntegralLatex(nextLevels, parsed.integral.integrandLatex));
+    const nextLevels = levels.map((l, i) => (i === index ? { ...l, ...patch } : l));
+    setStructure({ levels: nextLevels, integrandLatex });
+    onChange(buildIntegralLatex(nextLevels, integrandLatex));
   }
 
   function updateIntegrand(next: string) {
-    if (!parsed.ok) return;
-    onChange(buildIntegralLatex(parsed.integral.levels, next));
+    setStructure({ levels, integrandLatex: next });
+    onChange(buildIntegralLatex(levels, next));
   }
 
   return (
