@@ -44,7 +44,7 @@ function App() {
               instead -- and Shape Vis, which for a double integral shows
               "volume under a surface," doesn't have an equivalent for a
               triple integral (there's no surface), so it's disabled. */}
-          <div className={`graph-container${isDouble ? " graph-container--2d" : ""}`}>
+          <div className="graph-container">
             {isDouble && evaluated.status === "ok" && <BoundsVisual2D levels={evaluated.levels} />}
             {isTriple && evaluated.status === "ok" && (
               <SceneRoot>
