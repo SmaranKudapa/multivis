@@ -136,3 +136,19 @@ export function parseIntegral(latexRaw: string): ParseResult {
     },
   };
 }
+
+/**
+ * Rebuilds a full integral LaTeX string from its parsed pieces -- the
+ * inverse of parseIntegral. Used by the bounds editor to turn an edit to
+ * one field (a single bound, or the integrand) back into a complete LaTeX
+ * string. Bounds are always braced in the output, regardless of whether
+ * the original used bare/unbraced bounds.
+ */
+export function buildIntegralLatex(levels: IntegralLevel[], integrandLatex: string): string {
+  const integralSigns = levels.map((l) => `\\int_{${l.lowerLatex}}^{${l.upperLatex}}`).join("");
+  const differentials = [...levels]
+    .reverse()
+    .map((l) => `d${l.varName}`)
+    .join("\\, ");
+  return `${integralSigns} ${integrandLatex} \\, ${differentials}`;
+}
