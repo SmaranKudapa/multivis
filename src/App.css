@@ -1,211 +1,432 @@
+/* Functional styling only -- a visual redesign comes later. */
+
 .app-shell {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.1rem;
   min-height: 100vh;
-  padding: 2.5rem 1rem 3rem;
-  text-align: center;
+  padding: 2rem 1rem 3rem;
   color: #1f2430;
   background: #f6f7fb;
 }
 
-.app-shell h1 {
-  margin: 0 0 0.25rem;
+.app-header {
+  text-align: center;
+}
+
+.app-header h1 {
+  margin: 0;
   font-size: 2rem;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: #1f2430;
 }
 
-.latex-input {
+.tagline {
+  margin: 0.2rem 0 0;
+  color: #5b6478;
+}
+
+.editor-card,
+.result-panel {
   width: 100%;
-  max-width: 640px;
-  min-height: 4rem;
-  padding: 0.85rem 1rem;
-  font-family: ui-monospace, Consolas, monospace;
-  font-size: 1rem;
-  color: #1f2430;
+  max-width: 760px;
+  padding: 1rem;
   background: #fff;
   border: 1px solid #dde1ea;
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: 0 1px 2px rgba(20, 30, 60, 0.04);
-  resize: vertical;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.latex-input:focus {
-  outline: none;
-  border-color: #4f83cc;
-  box-shadow: 0 0 0 3px rgba(79, 131, 204, 0.15);
-}
-
-.samples {
+.editor-card {
   display: flex;
-  gap: 0.6rem;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-.samples button {
-  padding: 0.45rem 0.9rem;
+.template-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.toolbar-label {
   font-size: 0.85rem;
-  font-weight: 500;
-  color: #35405c;
-  background: #fff;
-  border: 1px solid #dde1ea;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  font-weight: 600;
+  color: #5b6478;
 }
 
-.samples button:hover {
+.template-button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.35rem 0.7rem;
+  font: inherit;
+  line-height: 1.2;
+  color: #35405c;
+  background: #f6f7fb;
+  border: 1px solid #dde1ea;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.template-button:hover {
   background: #eef2fb;
   border-color: #b9c8e8;
 }
 
-.rendered-formula {
-  width: 100%;
-  max-width: 640px;
-  min-height: 3rem;
-  padding: 1.1rem;
-  overflow-x: auto;
-  background: #fff;
-  border: 1px solid #dde1ea;
-  border-radius: 10px;
-  box-shadow: 0 1px 2px rgba(20, 30, 60, 0.04);
-}
-
-.bounds-editor {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.4rem;
-  width: 100%;
-  max-width: 640px;
-  padding: 0.85rem 1rem;
-  background: #fff;
-  border: 1px solid #dde1ea;
-  border-radius: 10px;
-  box-shadow: 0 1px 2px rgba(20, 30, 60, 0.04);
-}
-
-.bounds-editor-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.bounds-editor-label {
-  min-width: 1.4rem;
-  font-family: ui-monospace, Consolas, monospace;
-  font-weight: 600;
-  color: #4f83cc;
-}
-
-.bounds-editor-to {
+.template-name {
   font-size: 0.85rem;
-  color: #8a91a3;
+  font-weight: 600;
 }
 
-.bounds-editor-input {
-  width: 8rem;
-  padding: 0.35rem 0.5rem;
-  font-family: ui-monospace, Consolas, monospace;
-  font-size: 0.9rem;
-  color: #1f2430;
-  background: #f6f7fb;
-  border: 1px solid #dde1ea;
-  border-radius: 6px;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+.template-symbol {
+  font-size: 0.75rem;
+  color: #6b7590;
 }
 
-.bounds-editor-input--wide {
-  width: 16rem;
-  max-width: 100%;
+.math-editor {
+  display: block;
+  width: 100%;
+  min-height: 4.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 1.6rem;
+  border: 1px solid #c9d1e3;
+  border-radius: 10px;
+  --caret-color: #2f6fbd;
+  --selection-background-color: rgba(79, 131, 204, 0.2);
+  --placeholder-color: #8aa4cf;
 }
 
-.bounds-editor-input:focus {
+.math-editor:focus-within {
   outline: none;
   border-color: #4f83cc;
   box-shadow: 0 0 0 3px rgba(79, 131, 204, 0.15);
-  background: #fff;
 }
+
+.editor-help {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #6b7590;
+}
+
+.editor-help code,
+.editor-help kbd {
+  padding: 0 0.25rem;
+  font-size: 0.78rem;
+  background: #f1f3f8;
+  border-radius: 4px;
+}
+
+.editor-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.examples {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #5b6478;
+}
+
+.examples select {
+  max-width: 100%;
+  padding: 0.3rem 0.4rem;
+  font: inherit;
+  border: 1px solid #dde1ea;
+  border-radius: 6px;
+}
+
+.link-button {
+  padding: 0;
+  font: inherit;
+  font-size: 0.85rem;
+  color: #2f6fbd;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.latex-input {
+  width: 100%;
+  min-height: 4rem;
+  padding: 0.6rem 0.8rem;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.9rem;
+  color: #1f2430;
+  background: #f9fafc;
+  border: 1px solid #dde1ea;
+  border-radius: 8px;
+  resize: vertical;
+}
+
+/* Result */
 
 .result-panel {
-  font-size: 1.15rem;
-  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
 }
 
-.result-panel strong {
+.result-value {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.result-label {
+  font-size: 0.85rem;
+  color: #5b6478;
+}
+
+.result-number {
+  font-size: 1.5rem;
+}
+
+.result-number strong {
   color: #2f6fbd;
 }
 
-.result-panel--error {
-  max-width: 640px;
-  color: #c0392b;
-  font-family: ui-monospace, Consolas, monospace;
+.problem {
+  padding: 0.75rem 0.9rem;
+  border-radius: 8px;
+}
+
+.problem p {
+  margin: 0;
+}
+
+.problem--error {
+  color: #7f1d1d;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.problem--warning {
+  color: #78350f;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+}
+
+.problem-title {
+  font-weight: 700;
+}
+
+.problem-part {
+  margin-top: 0.3rem !important;
   font-size: 0.9rem;
 }
+
+.problem-message {
+  margin-top: 0.35rem !important;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.latex-snippet {
+  display: inline-block;
+  margin-left: 0.25rem;
+  padding: 0 0.35rem;
+  font-size: 1.1rem;
+  vertical-align: middle;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 4px;
+}
+
+.note {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #5b6478;
+}
+
+.note--warning {
+  color: #92400e;
+}
+
+/* Graphs */
 
 .graphs {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1.5rem;
+  gap: 1.25rem;
   width: 100%;
   max-width: 900px;
+}
+
+.graphs--empty {
+  min-height: 6rem;
+  align-items: center;
 }
 
 .graph-panel {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.6rem;
+  gap: 0.4rem;
+  width: 420px;
+  max-width: 100%;
+  margin: 0;
 }
 
-.graph-label {
-  margin: 0;
-  font-size: 1rem;
+.graphs--single .graph-panel {
+  width: 640px;
+}
+
+.graph-panel figcaption {
+  display: flex;
+  flex-direction: column;
+}
+
+.graph-title {
   font-weight: 600;
   color: #35405c;
 }
 
+.graph-caption {
+  font-size: 0.8rem;
+  color: #6b7590;
+}
+
 .graph-container {
-  width: 380px;
-  max-width: 100%;
-  height: 380px;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
   background: #fff;
   border: 1px solid #dde1ea;
   border-radius: 10px;
-  box-shadow: 0 1px 2px rgba(20, 30, 60, 0.04);
   overflow: hidden;
 }
 
-/* Belt-and-suspenders: force the WebGL canvas to fill its container via
-   CSS alone, so the view is never stuck at the browser's default 300x150
-   canvas size while waiting on react-three-fiber's resize observer. */
+.graphs--single .graph-container {
+  aspect-ratio: 4 / 3;
+}
+
+/* Make the WebGL canvas fill its container even before r3f's resize observer runs. */
 .graph-container canvas {
   display: block;
   width: 100% !important;
   height: 100% !important;
 }
 
-.bounds-svg {
+.plot-svg {
+  display: block;
   width: 100%;
   height: 100%;
 }
 
+.plot-grid {
+  stroke: #eef0f4;
+  stroke-width: 1;
+}
+
+.plot-tick {
+  font-size: 10px;
+  fill: #6b7280;
+}
+
+.plot-axis-label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.region-fill {
+  fill: rgba(79, 131, 204, 0.25);
+}
+
+.region-outline {
+  fill: none;
+  stroke: #2f6fbd;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.region-slice {
+  fill: none;
+  stroke: rgba(47, 111, 189, 0.35);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.area-positive {
+  fill: rgba(79, 131, 204, 0.3);
+}
+
+.area-negative {
+  fill: rgba(217, 83, 79, 0.28);
+}
+
+.curve {
+  fill: none;
+  stroke: #2f6fbd;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.curve--context {
+  stroke: #9fb6dc;
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+.bound-line {
+  stroke: #2f6fbd;
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+}
+
 .graph-placeholder {
+  margin: 0;
+  text-align: center;
+  color: #8a91a3;
+}
+
+.color-legend {
+  position: absolute;
+  left: 0.6rem;
+  bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.45rem;
+  font-size: 0.72rem;
+  color: #4b5563;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+.color-legend-label {
+  font-weight: 600;
+}
+
+.color-legend-bar {
+  width: 80px;
+  height: 8px;
+  border-radius: 4px;
+}
+
+.scene-note {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.6rem;
+  margin: 0;
+  font-size: 0.72rem;
+  color: #6b7280;
+  pointer-events: none;
+}
+
+.graph-placeholder--fill {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
   padding: 0 1rem;
-  text-align: center;
-  color: #8a91a3;
-}
-
-.graph-placeholder--error {
-  color: #c0392b;
 }

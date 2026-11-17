@@ -1,83 +1,76 @@
 # Multivis
 
-Multivis is an interactive visualizer for multivariable calculus. Type a
-double or triple integral in LaTeX, and see it rendered as proper math
-notation alongside a computed value and graphs of the region or solid it
-describes.
-
-**Try it live:** https://smarankudapa.github.io/multivis/
+Multivis is an interactive visualizer for integrals from multivariable
+calculus. Type a single, double or triple integral (Cartesian, polar,
+cylindrical or spherical) straight into a math editor, and get its value
+plus graphs of the region or solid it describes.
 
 ## Using it
 
-There's one text box. Type an integral in LaTeX, and everything else
-updates as you type. Two buttons above the formula (**Sample 2D
-integral**, **Sample 3D integral**) fill the box with a working example if
-you just want to see it in action first.
+- **Start from a template.** The buttons above the editor (Single,
+  Double, Triple, Polar, Cylindrical, Spherical) drop in an integral with
+  empty boxes. Click a box or press <kbd>Tab</kbd> to jump between them.
+  The polar, cylindrical and spherical templates already include the
+  Jacobian (r, or ρ² sin φ).
+- **Or just type.** The editor is a visual math field (MathLive), so you
+  edit the rendered integral directly. Handy shortcuts: `int` → ∫ with
+  bound boxes, `/` → fraction, `^` → power, `sqrt` → √, `pi` → π,
+  `theta` / `rho` / `phi` → θ / ρ / φ, `oo` → ∞. On touch devices a math
+  keyboard appears.
+- **Examples** shows ready-made integrals for each kind.
+- **Show LaTeX** reveals the underlying LaTeX if you want to copy or paste
+  it. Editing it updates the editor too.
 
-- The formula renders below the box, in proper math notation.
-- Below that, each bound and the integrand also get their own small text
-  field, if you'd rather tweak just one number than edit the raw LaTeX —
-  editing a field updates everything else (the LaTeX box included), since
-  they're both just views onto the same integral. These fields stay put
-  even if what you're typing is momentarily invalid (like a blank
-  integrand mid-edit) — the error shows up below instead of the fields
-  disappearing on you.
-- The computed value (area/volume, or a weighted total if your integrand
-  isn't 1) appears underneath.
-- **Bounds Vis** and **Shape Vis** show two different views, and what
-  they show depends on whether you typed a double or triple integral:
-  - **Double integral:** Bounds Vis is the 2D region your bounds
-    describe; Shape Vis is the surface/volume above it in 3D.
-  - **Triple integral:** a triple integral's bounds already describe a 3D
-    solid directly (there's no separate 2D region, and no "surface" the
-    way a double integral has one), so Bounds Vis shows that solid, and
-    Shape Vis is disabled.
+### What you get
 
-If your bounds don't describe a valid region (e.g. an upper bound that's
-actually less than the lower bound), you'll get an error message instead
-of a graph.
+| Integral | Graphs |
+| --- | --- |
+| Single | The curve with the signed area shaded (blue above the axis, red below) |
+| Double (Cartesian or polar) | The region in the plane (with dashed slices showing the inner integral), and the solid under the surface. The surface height is the integrand (divided by r for polar), so the volume shown equals the integral |
+| Triple (Cartesian, cylindrical, spherical) | The solid, colored by density if the integrand ÷ volume element varies |
 
-## Writing an integral
+3D views auto-scale to fit. If one axis has to be stretched to keep the
+picture readable, the view says so. Infinite regions are clipped to a
+finite window, with a note saying where.
 
-Double and triple integrals both work — Multivis tells them apart by
-counting how many `\int` signs you write, so no separate mode switch is
-needed:
+### When something's wrong
 
-```
-\int_{0}^{1}\int_{x^2}^{\sqrt{x}} 1 \, dy\, dx
-```
+Multivis never graphs an integral that isn't valid. It explains what's
+wrong and **which part** (a specific bound, the integrand, or the
+structure). Some examples:
 
-```
-\int_{0}^{1}\int_{0}^{1-x}\int_{0}^{1-x-y} 1 \, dz\, dy\, dx
-```
+- an empty box, a syntax error, or an unknown command
+- a bound that uses the wrong variable (e.g. the bound for `y` using
+  `y` or `z`, or non-constant outermost bounds)
+- a bound that's undefined over part of the region, with the exact
+  interval, e.g. "√(1−x²) can't be evaluated when x is between 1 and 2"
+- an integrand that's undefined inside the region, with a point
+- an integral that diverges
 
-A few things worth knowing:
+If an upper bound is **smaller** than its lower bound, the integral is
+mathematically legal as a signed integral, so Multivis shows its value.
+But it explains that the bounds don't describe a real region, says where
+they cross, and shows no graph.
 
-- **Variables must be `x`, `y`, or `z`.** Each one can only appear in one
-  differential (`dx`, `dy`, `dz`), and you need exactly as many
-  differentials as `\int` signs.
-- **The differentials decide which variable is "outer."** The bound that's
-  paired with the *last* differential (rightmost, e.g. `dx` in `dy\,dx`) is
-  the outermost — its bounds must be constants. Earlier differentials'
-  bounds can depend on the outer variable(s). This means both
-  `\int_a^b\int_{g(x)}^{h(x)} f \, dy\,dx` and
-  `\int_c^d\int_{g(y)}^{h(y)} f \, dx\,dy` work correctly.
-- **Bounds can be bare or braced:** `\int_0^1` and `\int_{0}^{1}` both
-  work.
-- **Supported syntax:** `\frac{}{}`, `\sqrt{}` and `\sqrt[n]{}`, exponents
-  (`x^2`, `x^{2}`), `\sin \cos \tan \sec \csc \cot`, `\ln`, `\log` (base
-  10), `\exp`, `\pi`, `\infty`, `\cdot`/`\times`, and implicit
-  multiplication (`2x`, `xy`, `x(y+1)`).
+## Writing integrals
 
-### More examples to try
+- Each ∫ needs a lower bound (`_`) and an upper bound (`^`), and there's
+  one differential per ∫ at the end, innermost first: `dz dy dx`.
+- The rightmost differential is the outermost variable. Its bounds must
+  be numbers. Inner bounds can use any variable further out.
+- Supported coordinate systems, detected from the differentials:
+  - single: `dx`, `dy` or `dz`
+  - double: any two of `dx dy dz`, or `dr dθ` (polar)
+  - triple: `dx dy dz`, `dz dr dθ` (cylindrical), `dρ dφ dθ` (spherical,
+    φ measured from the +z axis)
+- Supported math: `+ − × ÷`, fractions, powers, `√` and n-th roots,
+  `sin cos tan sec csc cot`, their inverses (`\arcsin` or `\sin^{-1}`),
+  `sinh cosh tanh`, `ln`, `log` (base 10) and `\log_b`, `exp`, `|x|`,
+  `π`, `e`, `∞`, and implicit multiplication (`2x`, `xy`, `x(y+1)`).
 
-```
-\int_{-1}^{1}\int_{-\sqrt{1-x^2}}^{\sqrt{1-x^2}} x^2+y^2 \, dy\, dx
-```
-
-```
-\int_{0}^{1}\int_{0}^{1}\int_{0}^{1} xyz \, dz\, dy\, dx
-```
+Values are computed with tanh-sinh quadrature. It handles singular
+endpoints (like 1/√x) and infinite bounds, and usually gives 10+ correct
+digits.
 
 ## Running it locally
 
@@ -86,11 +79,27 @@ npm install
 npm run dev
 ```
 
-Then open the local URL Vite prints in your terminal.
-
-Other useful commands:
+Other commands:
 
 ```bash
-npm test    # run the unit test suite
-npm run build   # production build
+npm test        # unit tests
+npm run lint
+npm run build   # production build into dist/
 ```
+
+## Deploying (Vercel)
+
+The repo includes a `vercel.json` (Vite preset, output `dist/`). Import the
+GitHub repository in Vercel once, and every push to `main` deploys.
+Pull requests get preview URLs.
+
+## Code map
+
+- `src/lib/math/`: everything numeric, with no React. That's the
+  tokenizer, LaTeX expression parser and compiler, integral structure
+  parser, coordinate systems, quadrature, and the `analyzeIntegral`
+  pipeline that validates and computes.
+- `src/lib/graph/`: geometry helpers: region mapping, infinite-region
+  clipping, surfaces, scaling.
+- `src/components/`: the editor, result panel and graphs (SVG for 2D,
+  react-three-fiber for 3D).
