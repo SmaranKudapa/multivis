@@ -1,73 +1,92 @@
-import { useState } from "react";
+import { useDeferredValue, useMemo, useRef, useState } from "react";
 import "./App.css";
-import { LatexInput } from "./components/LatexInput";
-import { RenderedFormula } from "./components/RenderedFormula";
-import { BoundsEditor } from "./components/BoundsEditor";
+import { MathEditor, type MathEditorHandle } from "./components/MathEditor";
 import { ResultPanel } from "./components/ResultPanel";
-import { BoundsVisual2D } from "./components/BoundsVisual2D";
-import { SceneRoot } from "./components/scene/SceneRoot";
-import { DoubleIntegralVisual } from "./components/scene/DoubleIntegralVisual";
-import { TripleIntegralVisual } from "./components/scene/TripleIntegralVisual";
-import { useParsedIntegral } from "./hooks/useParsedIntegral";
+import { GraphArea } from "./components/GraphArea";
+import { analyzeIntegral } from "./lib/math/analyze";
+import { clipNotes, computeClips } from "./lib/graph/region";
+import { EXAMPLES, TEMPLATES } from "./presets";
 
-const SAMPLE_DOUBLE_LATEX = "\\int_{-1}^{1}\\int_{-\\sqrt{1-x^2}}^{\\sqrt{1-x^2}} x^2+y^2 \\, dy\\, dx";
-const SAMPLE_TRIPLE_LATEX = "\\int_{-1}^{1}\\int_{x/2-1}^{x+1}\\int_{xy-1}^{xy+1} y \\, dz\\, dy\\, dx";
+const INITIAL = EXAMPLES[1].latex;
 
 function App() {
-  const [latex, setLatex] = useState(SAMPLE_DOUBLE_LATEX);
-  const evaluated = useParsedIntegral(latex);
-  const isDouble = evaluated.status === "ok" && evaluated.mode === "double";
-  const isTriple = evaluated.status === "ok" && evaluated.mode === "triple";
+  const [latex, setLatex] = useState(INITIAL);
+  const [showLatex, setShowLatex] = useState(false);
+  const editorRef = useRef<MathEditorHandle>(null);
+
+  // Typing stays responsive even while a heavy triple integral is recomputed.
+  const deferredLatex = useDeferredValue(latex);
+  const analysis = useMemo(() => analyzeIntegral(deferredLatex), [deferredLatex]);
+  const clips = useMemo(() => (analysis.status === "error" ? null : computeClips(analysis.ranges)), [analysis]);
+  const notes = useMemo(
+    () => (analysis.status === "ok" && clips ? clipNotes(analysis.integral, clips) : []),
+    [analysis, clips],
+  );
 
   return (
     <main className="app-shell">
-      <h1>Multivis</h1>
-      <LatexInput value={latex} onChange={setLatex} />
-      <div className="samples">
-        <button type="button" onClick={() => setLatex(SAMPLE_DOUBLE_LATEX)}>
-          Sample 2D integral
-        </button>
-        <button type="button" onClick={() => setLatex(SAMPLE_TRIPLE_LATEX)}>
-          Sample 3D integral
-        </button>
-      </div>
-      <RenderedFormula latex={latex} />
-      <BoundsEditor latex={latex} onChange={setLatex} />
-      <ResultPanel evaluated={evaluated} />
+      <header className="app-header">
+        <h1>Multivis</h1>
+        <p className="tagline">Type an integral, get its value and see its region.</p>
+      </header>
 
-      <div className="graphs">
-        <div className="graph-panel">
-          <h2 className="graph-label">Bounds Vis</h2>
-          {/* For a double integral this is the 2D base region D. A triple
-              integral's bounds describe a 3D solid directly (there's no
-              separate 2D region to show), so this panel shows that solid
-              instead -- and Shape Vis, which for a double integral shows
-              "volume under a surface," doesn't have an equivalent for a
-              triple integral (there's no surface), so it's disabled. */}
-          <div className="graph-container">
-            {isDouble && evaluated.status === "ok" && <BoundsVisual2D levels={evaluated.levels} />}
-            {isTriple && evaluated.status === "ok" && (
-              <SceneRoot>
-                <TripleIntegralVisual levels={evaluated.levels} />
-              </SceneRoot>
-            )}
-            {evaluated.status === "error" && <p className="graph-placeholder graph-placeholder--error">Fix the integral above to see this graph.</p>}
-          </div>
+      <section className="editor-card">
+        <div className="template-bar" role="toolbar" aria-label="Integral templates">
+          <span className="toolbar-label">New:</span>
+          {TEMPLATES.map((t) => (
+            <button key={t.label} type="button" className="template-button" onClick={() => editorRef.current?.insertTemplate(t.latex)}>
+              <span className="template-name">{t.label}</span>
+              <span className="template-symbol">{t.symbol}</span>
+            </button>
+          ))}
         </div>
 
-        <div className="graph-panel">
-          <h2 className="graph-label">Shape Vis</h2>
-          <div className="graph-container">
-            {isDouble && evaluated.status === "ok" && (
-              <SceneRoot>
-                <DoubleIntegralVisual levels={evaluated.levels} integrandFn={evaluated.integrandFn} />
-              </SceneRoot>
-            )}
-            {isTriple && <p className="graph-placeholder">Shape Vis disabled.</p>}
-            {evaluated.status === "error" && <p className="graph-placeholder graph-placeholder--error">Fix the integral above to see this graph.</p>}
-          </div>
+        <MathEditor ref={editorRef} value={latex} onChange={setLatex} />
+
+        <p className="editor-help">
+          Click a box to edit it, and press <kbd>Tab</kbd> to jump to the next empty box. Shortcuts: <code>int</code> → ∫, <code>/</code> → fraction,{" "}
+          <code>^</code> → power, <code>sqrt</code> → √, <code>pi</code> → π, <code>theta</code>/<code>rho</code>/<code>phi</code> → θ/ρ/φ,{" "}
+          <code>oo</code> → ∞.
+        </p>
+
+        <div className="editor-footer">
+          <label className="examples">
+            <span>Examples:</span>
+            <select
+              value=""
+              onChange={(e) => {
+                const ex = EXAMPLES[Number(e.target.value)];
+                if (ex) setLatex(ex.latex);
+              }}
+            >
+              <option value="" disabled>
+                Choose an example…
+              </option>
+              {EXAMPLES.map((ex, i) => (
+                <option key={ex.label} value={i}>
+                  {ex.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button type="button" className="link-button" onClick={() => setShowLatex((s) => !s)} aria-expanded={showLatex}>
+            {showLatex ? "Hide LaTeX" : "Show LaTeX"}
+          </button>
         </div>
-      </div>
+
+        {showLatex && (
+          <textarea
+            className="latex-input"
+            value={latex}
+            onChange={(e) => setLatex(e.target.value)}
+            spellCheck={false}
+            aria-label="Integral as LaTeX"
+          />
+        )}
+      </section>
+
+      <ResultPanel analysis={analysis} notes={notes} />
+      <GraphArea analysis={analysis} clips={clips} />
     </main>
   );
 }
